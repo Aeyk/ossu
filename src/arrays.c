@@ -188,60 +188,6 @@ void destroy_vector(vector *vec) {
 int main(int argc, char** argv) {
   assert(argc >= 1);
   assert(argv != NULL);
-
-  /* vector *A = make_vector(2); */
-  /* for(int i = 0; i <= 10; ++i ) { */
-  /*   A = push(A, 128); */
-  /*   pop(A); */
-  /* } */
-
-  /* for(int i = 0; i <= 8; ++i ) { */
-  /*   A = push(A, 255); */
-  /* } */
-  
-  /* for(int i = 0; i <= 8; ++i ) { */
-  /*   pop(A); */
-  /* } */
-  /* destroy_vector(A); */
-
-  /* vector *B = make_vector(1); */
-  /* for(int i = 0; i <= 4; i++) { */
-  /*   B = push(B, pow(2, i)); */
-  /* } */
-  /* for(int i = 0; i <= 4; i++ ) { */
-  /*   pop_head(B); */
-  /* } */
-  /* destroy_vector(B); */
-
-  /* vector *C = make_vector(2); */
-  /* for(int i = 0; i <= 4; i++) { */
-  /*   C = push(C, i*2); */
-  /* } */
-  /* for(int i = 0; i <= 4; i++) { */
-  /*   pop(C); */
-  /* } */
-  /* destroy_vector(C); */
-
-  vector *D = make_vector(2);
-  for(int i = 1; i <= 2; i++) {
-    D = push_tail(D, i*2);
-  }
-  for(int i = 1; i <= 2; i++) {
-    D = push(D, i*2);
-  }
-  for(int i = 1; i <= 4; i++) {
-    at(D, i);
-  }
-  for(int i = 1; i <= 4; i++) {
-    pop(D);
-  }
-  
-  for(int i = 1; i <= 4; i++) {
-    insert(D, i * 2, i);
-  }
-
-  delete(D, 0);
-  destroy_vector(D);
   
   int _errno = errno;
   if(errno >= 0)
