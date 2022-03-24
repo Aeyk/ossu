@@ -1,3 +1,4 @@
+#define DEBUG
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -6,62 +7,71 @@
 /* [ ] Implement a vector (mutable array with automatic resizing) */
 
 typedef struct {
-  size_t size;  
+  size_t size;
+  size_t fill;
   size_t *buffer;
 } vector;
 
 vector *make_vector(size_t size) {
   vector *result = malloc(sizeof(vector));
   result->size = size;
+  result->fill = 0;
   result->buffer = malloc(size * sizeof(size_t));
-  for(size_t i = 0; i <= size; i++) {
-    result->buffer[i] = 0;
-  }
+  #ifdef DEBUG
+  printf("result->size %d\nresult->fill %d\n", result->size, result->fill);
+  #endif
+
   return result;
 }
 
 vector *push(vector *vec, size_t element) {
-  vec->size = vec->size + 1;
-  vec->buffer = realloc(vec->buffer, vec->size * sizeof(size_t));
-
-  if(NULL == vec->buffer) {
-    vec->size = vec->size - 1;   
-    return -1;
-  }
-  vec->buffer[vec->size - 1] = element;
-  return vec;
+  #ifdef DEBUG
+  printf("vec->size %d\nvec->fill %d\n", vec->size, vec->fill);
+  #endif
+  vector *result;
+  if(vec->fill <= vec->size - 1) {
+    result->fill = vec->fill + 1;
+    result->size = vec->size;
+    result->buffer = vec->buffer;
+  } else {
+    result->fill = vec->fill + 1;
+    result->size = vec->size * 2;
+    result->buffer = realloc(vec->buffer, vec->size * sizeof(size_t));
+ } 
+  vec->buffer[vec->fill] = element;
+  return result ;
 }
+
 
 vector *pop(vector *vec) {
-  size_t element = vec->buffer[vec->size - 2];
-
-  vec->size = vec->size - 1;
-  vec->buffer = realloc(vec->buffer, vec->size * sizeof(size_t));
-
-  if(NULL == vec->buffer) {
-    vec->size = vec->size + 1;   
-    return -1;
+  if(0 < vec->fill) {
+    vec->fill = vec->fill - 1;
+    vec->buffer[vec->fill] = 0;
+    return vec->buffer[vec->fill];
+  } else {
+    return vec->buffer[vec->fill];
   }
-
-  return element;
 }
 
-void destroy_vector(vector *vector) {
-  free(vector);
+void destroy_vector(vector *vec) {
+  free(vec->buffer);
+  free(vec);
 }
 
 int main(int argc, char** argv) {
   assert(argc >= 1);
   assert(argv != NULL);
 
-  vector *A = make_vector(10);  
-  for(int i = 0; i <= 10; i++ ) {
-    printf("%d\n", A->buffer[i]);
+  vector *A = make_vector(2);  
+  for(int i = 0; i <= 10; ++i ) {
     A = push(A, 128);
+    printf("A->buffer[A->fill] %d\n", A->buffer[A->fill]);
   }
-  for(int i = 0; i <= 10; i++ ) {
-    printf("%d\n", pop(A));    
-  }
+
+  /* for(int i = 0; i <= 10; ++i ) { */
+  /*   size_t temp = pop(A); */
+  /*   printf("%d\n", temp); */
+  /* } */
 
   destroy_vector(A);
 
