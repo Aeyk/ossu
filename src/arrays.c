@@ -4,12 +4,12 @@
 #else
 # define DEBUG_PRINT(x) do {} while (0)
 #endif
-
-#include <math.h>
 #include <stdio.h>
-#include <string.h> 
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h> 
 #include <assert.h>
+#include <math.h>
 #include <errno.h>
 #include <sys/types.h>
 
@@ -31,6 +31,27 @@ vector *make_vector(size_t size) {
 
   DEBUG_PRINT(("[INFO] make_vector 	 	 size: %d	fill: %d\n",
                result->size, result->fill));
+  return result;
+}
+
+size_t at(vector *vec, size_t index) {
+  DEBUG_PRINT(("[INFO] at  			 index: %d fill: %d\n", index, vec->fill));
+  return vec->buffer[index];
+}
+
+size_t size(vector *vec) {
+  DEBUG_PRINT(("[INFO] size 			 %d\n", vec->fill));
+  return vec->fill;
+}
+
+size_t capacity(vector *vec) {
+  DEBUG_PRINT(("[INFO] is_empty 			 %d\n", vec->size - vec->fill));
+  return vec->size - vec->fill;
+}
+
+bool is_empty(vector *vec) {
+  bool result = (0 == size(vec));
+  DEBUG_PRINT(("[INFO] is_empty 			 %d\n", result));
   return result;
 }
 
@@ -67,7 +88,7 @@ vector *push_tail(vector *vec, size_t element) {
     result->buffer = vec->buffer;    
   }
   for(int i = result->fill; i >= 2; i -= 1) {
-      result->buffer[i - 1] = result->buffer[i];
+    result->buffer[i - 1] = result->buffer[i];
   }
   result->buffer[1] = result->buffer[0];    
   result->buffer[0] = element;
@@ -87,7 +108,7 @@ vector *pop(vector *vec) {
     vec->fill = vec->fill - 1;
   }
   
-  DEBUG_PRINT(("[INFO] pop		 	 element: %d", element));
+  DEBUG_PRINT(("[INFO] pop		 	 head: %d", element));
   DEBUG_PRINT(("\n"));
   return element;
 }
@@ -162,6 +183,9 @@ int main(int argc, char** argv) {
   }
   for(int i = 1; i <= 2; i++) {
     D = push(D, i*2);
+  }
+  for(int i = 1; i <= 4; i++) {
+    at(D, i);
   }
   for(int i = 1; i <= 4; i++) {
     pop(D);
