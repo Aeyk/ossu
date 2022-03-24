@@ -1,6 +1,6 @@
 SRC_DIR = ./src
 INCLUDE_DIR += .
-
+BUILD_DIR = build/
 TARGET = $(notdir $(CURDIR))
 CC := gcc
 LD := $(CC)
@@ -21,6 +21,12 @@ all: $(TARGET)
 		@echo "Builded target:" $^
 		@echo "Done"
 
+lib: src/arrays.c src/arrays.h
+		$(CC) -shared $(CFLAGS) $^ -o $(BUILD_DIR)/libossu-arrays.so
+		# mv arrays.o build
+		# ar rcs $(BUILD_DIR)/lib-ossu-arrays.a build/*.o
+
+
 $(basename $(TARGET)) : $(OBJS)
 		@echo "Linking" $@ "from" $^ "..."
 		$(LD) -o $@ $^ $(LDFLAGS) $(LD_LIBS)
@@ -35,6 +41,7 @@ $(OBJS) : %.o:%.$(TYPE)
 clean : cleanobj
 		@echo "Remove all executable file"
 		rm -f $(TARGET)
+
 cleanobj :
 		@echo "Remove binary files"
 		rm -f *.o

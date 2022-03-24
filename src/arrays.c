@@ -4,6 +4,7 @@
 #else
 # define DEBUG_PRINT(x) do {} while (0)
 #endif
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -30,6 +31,11 @@ vector *make_vector(size_t size) {
     result->buffer[i] = NULL;
 
   DEBUG_PRINT(("[INFO] make_vector 	 	 size: %d	fill: %d\n",
+
+
+
+
+
                result->size, result->fill));
   return result;
 }
@@ -133,6 +139,45 @@ void *pop_head(vector *vec) {
   return element;
 }
 
+vector *insert(vector *vec, size_t index, size_t element) {
+  vector *result = vec;
+  if(index == vec->fill) {
+    result = push(result, element);
+  } else if (index == 0) {
+    result = push_tail(result, element);
+  } else {
+    result->fill += 1;
+    for(int i = result->fill; i <= index; i--) {
+      result->buffer[i] = result->buffer[i - 1];
+    }
+    result->buffer[index] = element;
+  }
+  DEBUG_PRINT(("[INFO] insert 	 	 	 size: %d	element: %d\n",
+               result->size, element));
+  return result;
+}
+
+vector *delete(vector *vec, size_t index) {
+  vector *result = vec;
+  if(index == vec->fill) {
+    result = pop(result);
+  } else if (index == 0) {
+    result = pop_head(result);
+  } else {
+    result->fill -= 1; 
+    for(int i = index; i <= result->fill; i++) {
+      result->buffer[i] = result->buffer[i + 1];
+    }
+    result->buffer[index] = NULL;
+  }
+  DEBUG_PRINT(("[INFO] delete 	 		 "));
+  for(int i = vec->fill; i >= 0; i--) {
+    int index = vec->fill - i;
+    DEBUG_PRINT(("buffer[%d]: %d ", index, result->buffer[index]));
+  }
+  DEBUG_PRINT(("\n"));
+}
+
 void destroy_vector(vector *vec) {
   DEBUG_PRINT(("[INFO] destroy_vector		 size: %d	fill: %d\n",
                vec->size, vec->fill));
@@ -190,6 +235,12 @@ int main(int argc, char** argv) {
   for(int i = 1; i <= 4; i++) {
     pop(D);
   }
+  
+  for(int i = 1; i <= 4; i++) {
+    insert(D, i * 2, i);
+  }
+
+  delete(D, 0);
   destroy_vector(D);
   
   int _errno = errno;
