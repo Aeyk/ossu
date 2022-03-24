@@ -5,7 +5,7 @@ TARGET = $(notdir $(CURDIR))
 CC := gcc
 LD := $(CC)
 CFLAGS	:= -g -ggdb -g3 -Wall -Wextra -Wpedantic -std=c11 -Wfloat-equal -Wshadow -Wswitch-enum -Wcast-qual -Wbad-function-cast -Wconversion -Wundef -Wunused-macros -Wduplicated-cond -Wduplicated-branches -Wreturn-local-addr
-LDFLAGS := 
+LDFLAGS := -lm
 
 ifeq ($(CC), g++)
 		TYPE = cpp
