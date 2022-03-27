@@ -55,7 +55,14 @@ bool is_empty(array *arr) {
   return result;
 }
 
-void print_array(array *arr) {}
+void print_array(array *arr) {
+	DEBUG_PRINT(("[INFO] print_array 	 	 size: %d	fill: %d\n",
+               arr->size, 0));
+  for(int i = 0; i <= arr->fill; i++) {
+    DEBUG_PRINT(("[INFO] 			 	 	 			 buffer[%d]: %d ", i, arr->buffer[i]));
+  }
+  DEBUG_PRINT(("\n"));	
+}
 
 array *prepend(array *arr, size_t element) {
   array *result = arr;
