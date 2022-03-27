@@ -99,7 +99,7 @@ vector *push_tail(vector *vec, size_t element) {
   result->buffer[1] = result->buffer[0];    
   result->buffer[0] = element;
 
-  DEBUG_PRINT(("[INFO] push_tail		 "));
+  DEBUG_PRINT(("[INFO] push_tail			 "));
   for(int i = 0; i <= vec->fill; i++) {
     DEBUG_PRINT(("buffer[%d]: %d ", i, result->buffer[i]));
   }
@@ -114,7 +114,7 @@ vector *pop(vector *vec) {
     vec->fill = vec->fill - 1;
   }
   
-  DEBUG_PRINT(("[INFO] pop		 	 head: %d", element));
+  DEBUG_PRINT(("[INFO] pop		 	 			 head: %d", element));
   DEBUG_PRINT(("\n"));
   return element;
 }
@@ -130,7 +130,7 @@ void *pop_head(vector *vec) {
 		temp_buffer[0] = vec->buffer[1];				
   }
   
-  DEBUG_PRINT(("[INFO] pop_head 	 	 "));
+  DEBUG_PRINT(("[INFO] pop_head		 	 	 "));
   for(int i = vec->fill; i >= 0; i--) {
     int index = vec->fill - i;
     DEBUG_PRINT(("buffer[%d]: %d ", index, vec->buffer[index]));
@@ -179,7 +179,7 @@ vector *delete(vector *vec, size_t index) {
 }
 
 void destroy_vector(vector *vec) {
-  DEBUG_PRINT(("[INFO] destroy_vector		 size: %d	fill: %d\n",
+  DEBUG_PRINT(("[INFO] destroy_vector	 size: %d	fill: %d\n",
                vec->size, vec->fill));
   free(vec->buffer);
   free(vec);
