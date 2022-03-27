@@ -14,18 +14,18 @@
 #include <errno.h>
 #include <sys/types.h>
 
-/* [X] Implement a vector (mutable array with automatic resizing) */
+/* [X] Implement a array (mutable array with automatic resizing) */
 
 typedef struct {
   size_t size;
   size_t fill;
   size_t *buffer;
-} vector;
+} array;
 
-vector *make_vector(size_t size) {
-  DEBUG_PRINT(("[INFO] make_vector 	 	 size: %d	fill: %d\n",
+array *make_array(size_t size) {
+  DEBUG_PRINT(("[INFO] make_array 	 	 size: %d	fill: %d\n",
                size, 0));
-  vector *result = calloc(size , sizeof(vector));
+  array *result = calloc(size , sizeof(array));
   result->size = size;
   result->fill = 0;
   result->buffer = calloc(size, sizeof(size_t));
@@ -34,46 +34,47 @@ vector *make_vector(size_t size) {
   return result;
 }
 
-size_t at(vector *vec, size_t index) {
-  DEBUG_PRINT(("[INFO] at		  			 	 index: %d fill: %d\n", index, vec->fill));
-  return vec->buffer[index];
+size_t at(array *arr, size_t index) {
+  DEBUG_PRINT(("[INFO] at		  			 	 index: %d fill: %d\n", index, arr->fill));
+  return arr->buffer[index];
 }
 
-size_t size(vector *vec) {
-  DEBUG_PRINT(("[INFO] size 			 %d\n", vec->fill));
-  return vec->fill;
+size_t size(array *arr) {
+  DEBUG_PRINT(("[INFO] size 			 %d\n", arr->fill));
+  return arr->fill;
 }
 
-size_t capacity(vector *vec) {
-  DEBUG_PRINT(("[INFO] is_empty 			 %d\n", vec->size - vec->fill));
-  return vec->size - vec->fill;
+size_t capacity(array *arr) {
+  DEBUG_PRINT(("[INFO] is_empty 			 %d\n", arr->size - arr->fill));
+  return arr->size - arr->fill;
 }
 
-bool is_empty(vector *vec) {
-  bool result = (0 == size(vec));
+bool is_empty(array *arr) {
+  bool result = (0 == size(arr));
   DEBUG_PRINT(("[INFO] is_empty 			 %d\n", result));
   return result;
 }
 
+void print_array(array *arr) {}
 
-vector *prepend(vector *vec, size_t element) {
-  vector *result = vec;
+array *prepend(array *arr, size_t element) {
+  array *result = arr;
 	size_t temp;
 	DEBUG_PRINT(("[INFO] prepend	 			 "));
-  for(int i = 0; i <= vec->fill; i++) {
-    DEBUG_PRINT(("buffer[%d]: %d ", i, vec->buffer[i]));
+  for(int i = 0; i <= arr->fill; i++) {
+    DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
-  //	DEBUG_PRINT(("buffer[%d]: %d ", vec->fill + 1, element));
+  //	DEBUG_PRINT(("buffer[%d]: %d ", arr->fill + 1, element));
   DEBUG_PRINT(("\n"));
 
-  if(vec->fill == vec->size) {
-    result->fill = vec->fill + 1;
-    result->size = vec->size * 2;
-    result->buffer = realloc(vec->buffer, result->size * sizeof(size_t));    
+  if(arr->fill == arr->size) {
+    result->fill = arr->fill + 1;
+    result->size = arr->size * 2;
+    result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));    
   } else {
-    result->fill = vec->fill + 1;
-    result->size = vec->size;
-    result->buffer = vec->buffer;
+    result->fill = arr->fill + 1;
+    result->size = arr->size;
+    result->buffer = arr->buffer;
   }
 	
 	for(int i = result->fill; i >= 1; i--) {
@@ -84,84 +85,86 @@ vector *prepend(vector *vec, size_t element) {
   return result;
 }
 
-vector *append(vector *vec, size_t element) {
-  vector *result = vec;  
+array *append(array *arr, size_t element) {
+  array *result = arr;  
   DEBUG_PRINT(("[INFO] append					 "));
-  for(int i = 0; i <= vec->fill; i++) {
-    DEBUG_PRINT(("buffer[%d]: %d ", i, vec->buffer[i]));
+  for(int i = 0; i <= arr->fill; i++) {
+    DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
 	DEBUG_PRINT(("\n"));
 	
-  if(vec->fill == vec->size) {
-    result->fill = vec->fill + 1;
-    result->size = vec->size * 2;
-    result->buffer = realloc(vec->buffer, result->size * sizeof(size_t));
+  if(arr->fill == arr->size) {
+    result->fill = arr->fill + 1;
+    result->size = arr->size * 2;
+    result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
   } else {
-    result->fill = vec->fill + 1;
-    result->size = vec->size;
-    result->buffer = vec->buffer;    
+    result->fill = arr->fill + 1;
+    result->size = arr->size;
+    result->buffer = arr->buffer;    
   }
 	result->buffer[result->fill] = element;
   return result;
 }
 
-vector *pop(vector *vec) {
-  size_t element = NULL || vec->buffer[vec->fill];
+array *pop(array *arr) {
+  size_t element = NULL || arr->buffer[arr->fill];
 	DEBUG_PRINT(("[INFO] pop		 	 			 "));
 
-  if(1 <= vec->size) {
-		DEBUG_PRINT(("head: %d fill: %d, size: %d\n", element, vec->fill, vec->size));
-    vec->buffer[vec->fill] = NULL;
-    vec->fill = vec->fill - 1;
+  if(1 <= arr->size) {
+		DEBUG_PRINT(("head: %d fill: %d, size: %d\n", element, arr->fill, arr->size));
+    arr->buffer[arr->fill] = NULL;
+    arr->fill = arr->fill - 1;
   } else {
-		DEBUG_PRINT(("head: NULL fill: %d, size: %d\n", element, vec->fill, vec->size));
+		DEBUG_PRINT(("head: NULL fill: %d, size: %d\n", element, arr->fill, arr->size));
 		return NULL;
 	}
   return element;
 }
 
-void *shift(vector *vec) {
-  size_t element = vec->buffer[0];
-  size_t *temp_buffer = vec->buffer;
+void *shift(array *arr) {
+  size_t element = arr->buffer[0];
+  size_t *temp_buffer = arr->buffer;
   DEBUG_PRINT(("[INFO] shift			 	 	 "));
-  for(int i = vec->fill; (i - 1) >= 0; i--) {
-    int index = vec->fill - i;
-    DEBUG_PRINT(("buffer[%d]: %d ", index, vec->buffer[index]));
+  for(int i = arr->fill; (i - 1) >= 0; i--) {
+    int index = arr->fill - i;
+    DEBUG_PRINT(("buffer[%d]: %d ", index, arr->buffer[index]));
   }
   DEBUG_PRINT(("\n"));
 
-  if(1 <= vec->fill) {
-    vec->fill = vec->fill - 1;
-		vec->buffer[0] = vec->buffer[1];				
-    for(int i = 0; i <= vec->fill; i += 1) {
-      vec->buffer[i] = vec->buffer[i + 1];
+  if(1 <= arr->fill) {
+    arr->fill = arr->fill - 1;
+		arr->buffer[0] = arr->buffer[1];				
+    for(int i = 0; i <= arr->fill; i += 1) {
+      arr->buffer[i] = arr->buffer[i + 1];
     }
   }
   
   return element;
 }
 
-vector *insert(vector *vec, size_t index, size_t element) {
-  vector *result = vec;
+array *insert(array *arr, size_t index, size_t element) {
+  array *result = arr;
   DEBUG_PRINT(("[INFO] insert	 	 	 	 	 element: %d size: %d\n",
-               vec->size, element));
-  if(index == vec->fill) {
-    result = prepend(result, element);
-  } else if (index == 0) {
+               arr->size, element));
+  if(index == arr->fill) {
     result = append(result, element);
+  } else if (index == 0) {
+    result = prepend(result, element);
   } else {
     result->fill += 1;
-    for(int i = result->fill; i <= index; i--) {
-      result->buffer[i] = result->buffer[i - 1];
-    }
+		if(result->fill >= index) {
+			for(int i = result->fill; i <= index; i--) {
+				result->buffer[i] = result->buffer[i - 1];
+			}
+		} 
     result->buffer[index] = element;
   }
   return result;
 }
 
-vector *delete(vector *vec, size_t index) {
-  vector *result = vec;
-  if(index == vec->fill) {
+array *delete(array *arr, size_t index) {
+  array *result = arr;
+  if(index == arr->fill) {
     result = pop(result);
   } else if (index == 0) {
     result = shift(result);
@@ -173,18 +176,18 @@ vector *delete(vector *vec, size_t index) {
     result->buffer[index] = NULL;
   }
   DEBUG_PRINT(("[INFO] delete 	 		 "));
-  for(int i = vec->fill; i >= 0; i--) {
-    int index = vec->fill - i;
+  for(int i = arr->fill; i >= 0; i--) {
+    int index = arr->fill - i;
     DEBUG_PRINT(("buffer[%d]: %d ", index, result->buffer[index]));
   }
   DEBUG_PRINT(("\n"));
 }
 
-void destroy_vector(vector *vec) {
-  DEBUG_PRINT(("[INFO] destroy_vector	 size: %d	fill: %d\n",
-               vec->size, vec->fill));
-  free(vec->buffer);
-  free(vec);
+void destroy_array(array *arr) {
+  DEBUG_PRINT(("[INFO] destroy_array	 size: %d	fill: %d\n",
+               arr->size, arr->fill));
+  free(arr->buffer);
+  free(arr);
 }
 
 int main(int argc, char** argv) {
