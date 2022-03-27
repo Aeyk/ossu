@@ -68,7 +68,7 @@ array *prepend(array *arr, size_t element) {
   array *result = arr;
 	size_t temp;
 	DEBUG_PRINT(("[INFO] prepend	 			 "));
-  for(int i = 0; i <= arr->fill; i++) {
+  for(int i = 0; i < arr->fill; i++) {
     DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
   //	DEBUG_PRINT(("buffer[%d]: %d ", arr->fill + 1, element));
@@ -109,7 +109,7 @@ array *append(array *arr, size_t element) {
     result->size = arr->size;
     result->buffer = arr->buffer;    
   }
-	result->buffer[result->fill - 1] = element;
+	result->buffer[result->fill] = element;
   return result;
 }
 
