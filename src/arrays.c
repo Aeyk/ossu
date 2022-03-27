@@ -94,7 +94,7 @@ vector *push_tail(vector *vec, size_t element) {
     result->buffer = vec->buffer;    
   }
   for(int i = result->fill; i >= 2; i -= 1) {
-    result->buffer[i - 1] = result->buffer[i];
+    result->buffer[i] = result->buffer[i - 1];
   }
   result->buffer[1] = result->buffer[0];    
   result->buffer[0] = element;
@@ -124,13 +124,13 @@ void *pop_head(vector *vec) {
   size_t *temp_buffer = vec->buffer;
   if(0 <= vec->fill) {
     vec->fill = vec->fill - 1;
-    temp_buffer[0] = vec->buffer[1];
     for(int i = 1; i <= vec->fill; i += 1) {
       temp_buffer[i - 1] = vec->buffer[i];
     }
+		temp_buffer[0] = vec->buffer[1];				
   }
   
-  DEBUG_PRINT(("[INFO] pop_head 	 	"));
+  DEBUG_PRINT(("[INFO] pop_head 	 	 "));
   for(int i = vec->fill; i >= 0; i--) {
     int index = vec->fill - i;
     DEBUG_PRINT(("buffer[%d]: %d ", index, vec->buffer[index]));
