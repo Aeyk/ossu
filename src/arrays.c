@@ -56,12 +56,12 @@ bool is_empty(array *arr) {
 }
 
 void print_array(array *arr) {
-	DEBUG_PRINT(("[INFO] print_array 	 	 size: %d	fill: %d\n",
-               arr->size, 0));
-  for(int i = 0; i <= arr->fill; i++) {
-    DEBUG_PRINT(("[INFO] 			 	 	 			 buffer[%d]: %d ", i, arr->buffer[i]));
+	DEBUG_PRINT(("[INFO] print_array 	 	 "));
+  for(int i = 0; i <  arr->fill; i++) {
+		DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
-  DEBUG_PRINT(("\n"));	
+  DEBUG_PRINT(("size: %d fill: %d\n",
+               arr->size, 0));	
 }
 
 array *prepend(array *arr, size_t element) {
@@ -109,7 +109,7 @@ array *append(array *arr, size_t element) {
     result->size = arr->size;
     result->buffer = arr->buffer;    
   }
-	result->buffer[result->fill] = element;
+	result->buffer[result->fill - 1] = element;
   return result;
 }
 
@@ -117,7 +117,10 @@ array *pop(array *arr) {
   size_t element = NULL || arr->buffer[arr->fill];
 	DEBUG_PRINT(("[INFO] pop		 	 			 "));
 
-  if(1 <= arr->size) {
+	if(0 == arr->fill) {
+		DEBUG_PRINT(("head: NULL fill: %d, size: %d\n", element, arr->fill, arr->size));
+		return arr->buffer[arr->fill] = NULL;;
+	} else if(1 <= arr->fill) {
 		DEBUG_PRINT(("head: %d fill: %d, size: %d\n", element, arr->fill, arr->size));
     arr->buffer[arr->fill] = NULL;
     arr->fill = arr->fill - 1;

@@ -6,6 +6,7 @@ module OSSU
   extend FFI::Library
   ffi_lib "build/libossu-arrays.so"
   attach_function :make_array, [ :size_t ], :pointer
+  attach_function :print_array, [ :pointer ], :void
   attach_function :destroy_array, [ :pointer ], :void
   attach_function :at, [ :pointer, :size_t ], :size_t
   attach_function :size, [ :pointer ], :size_t
@@ -21,129 +22,166 @@ end
 
 
 def log_like_c(arr)
+  fill = 0
+  size = 0
   s = "[INFO] ruby_array			 "
   arr.each_with_index {|x, i|
     s += "buffer[#{i}]: #{x} "
   }
+  s += "size: #{arr.length} fill: NUL"
   puts s
   return s
 end
 
 
-# OSSU.destroy_array(OSSU.make_array(2))
-# r_vec = []
-# c_vec = OSSU.make_array(2)
-# OSSU.pop(c_vec)
-# OSSU.pop(c_vec)
-# OSSU.pop(c_vec)
-# 8.times {|x|
-#   OSSU.prepend(c_vec, x+1)
-#   r_vec.prepend(x)
-# }
-# log_like_c r_vec
+OSSU.destroy_array(OSSU.make_array(2))
+r = []
+c = OSSU.make_array(2)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
+OSSU.pop(c)
 
-# OSSU.destroy_array(c_vec)
-# c_vec = OSSU.make_array(2)
-# r_vec = []
-# 8.times {|x|
-#   OSSU.append(c_vec, x+1)
-#   r_vec.append(x)
-# }
-# log_like_c r_vec
+8.times {|x|
+  OSSU.prepend(c, x+1)
+  r.prepend(x)
+}
+log_like_c r
 
-# OSSU.destroy_array(c_vec)
-# c_vec = OSSU.make_array(2)
-# r_vec = []
-# 8.times {|x|
-#   OSSU.append(c_vec, x+1)
-#   r_vec.append(x)
-# }
-# log_like_c r_vec
+OSSU.destroy_array(c)
+c = OSSU.make_array(2)
+r = []
+8.times {|x|
+  OSSU.append(c, x+1)
+  r.append(x)
+}
+log_like_c r
+
+OSSU.destroy_array(c)
+c = OSSU.make_array(2)
+r = []
+8.times {|x|
+  OSSU.append(c, x+1)
+  r.append(x)
+}
+log_like_c r
 
 
-# c_vec = OSSU.make_array(1)
-# r_vec = []
+# c = OSSU.make_array(1)
+# r = []
 # 8.times {|x|
-#   OSSU.prepend(c_vec, x + 1)
-#   r_vec.prepend(x)
+#   OSSU.prepend(c, x + 1)
+#   r.prepend(x)
 # }
-# log_like_c r_vec
-
-# 8.times {|x|
-#   OSSU.shift(c_vec)
-#   r_vec.shift
-# }
-
-# 8.times {|x|
-#   OSSU.append(c_vec, x+1)
-#   r_vec.append(x)
-# }
-# log_like_c r_vec
+# log_like_c r
 
 # 8.times {|x|
-#   OSSU.pop(c_vec)
-#   r_vec.pop
+#   OSSU.shift(c)
+#   r.shift
 # }
-# log_like_c r_vec
+
+# 8.times {|x|
+#   OSSU.append(c, x+1)
+#   r.append(x)
+# }
+# log_like_c r
+
+# 8.times {|x|
+#   OSSU.pop(c)
+#   r.pop
+# }
+# log_like_c r
 
 
 # 10.times {|x|
-#   OSSU.prepend(c_vec, 128);
-#   OSSU.pop(c_vec);
+#   OSSU.prepend(c, 128);
+#   OSSU.pop(c);
 # }
 
 # 8.times { |x|
-#   OSSU.prepend(c_vec, 255);
+#   OSSU.prepend(c, 255);
 # }
 # 8.times { |x|
-#   OSSU.pop(c_vec);
+#   OSSU.pop(c);
 # }
 
 # 8.times { |x|
-#   OSSU.prepend(c_vec, 2 ** x);
-#   OSSU.pop(c_vec);
+#   OSSU.prepend(c, 2 ** x);
+#   OSSU.pop(c);
 # }
 
 # 4.times {|x|
-#   OSSU.prepend(c_vec, 2 ** x);
+#   OSSU.prepend(c, 2 ** x);
 # }
 
 # 4.times {|x|
-#   OSSU.shift(c_vec);
+#   OSSU.shift(c);
 # }
 
 # 4.times {|x|
-#   OSSU.shift(c_vec);
+#   OSSU.shift(c);
 # }
 
 # 4.times {|x|
-#   OSSU.prepend(c_vec, x*2);
+#   OSSU.prepend(c, x*2);
 # }
 
 # 4.times {|x|
-#   OSSU.pop(c_vec);
+#   OSSU.pop(c);
 # }
 
 # 4.times{|x|
-#   OSSU.append(c_vec, 1+x*4);
+#   OSSU.append(c, 1+x*4);
 # }
 
 # 4.times{|x|
-#   OSSU.prepend(c_vec, 1+x*4);
+#   OSSU.prepend(c, 1+x*4);
 # }
 
 # 4.times {|x|
-#   OSSU.at(c_vec, x);
+#   OSSU.at(c, x);
 # }
 
 # 4.times {|x|
-#   OSSU.pop(c_vec);
+#   OSSU.pop(c);
 # }
-c_vec = OSSU.make_array(2)
-r_vec = []
-4.times {|x|
-  OSSU.insert(c_vec, x * 8, x);
-  r_vec.insert(x * 8, x)
-}
-log_like_c r_vec
+
+# c = OSSU.make_array(1)
+# r = []
+# # 4.times {|x|
+# #   OSSU.insert(c, x * 8, x);
+# #   r.insert(x * 8, x)
+# # }
+
+# c = OSSU.make_array(1)
+# r = []
+# 4.times{|x|
+#   OSSU.prepend(c, x);
+#   r.prepend(x)
+# }
+# log_like_c r
+# OSSU.print_array(c)
+
+
+# r = []
+# c = OSSU.make_array(2)
+# 4.times{|x|
+#   OSSU.append(c, x);
+#   r.append(x)
+# }
+
+
+# log_like_c r
+# OSSU.print_array(c)
 
