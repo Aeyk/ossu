@@ -23,25 +23,19 @@ typedef struct {
 } vector;
 
 vector *make_vector(size_t size) {
+  DEBUG_PRINT(("[INFO] make_vector 	 	 size: %d	fill: %d\n",
+               size, 0));
   vector *result = calloc(size , sizeof(vector));
   result->size = size;
   result->fill = 0;
   result->buffer = calloc(size, sizeof(size_t));
   for(int i = 0; i <= size; i++)
     result->buffer[i] = NULL;
-
-  DEBUG_PRINT(("[INFO] make_vector 	 	 size: %d	fill: %d\n",
-
-
-
-
-
-               result->size, result->fill));
   return result;
 }
 
 size_t at(vector *vec, size_t index) {
-  DEBUG_PRINT(("[INFO] at  			 index: %d fill: %d\n", index, vec->fill));
+  DEBUG_PRINT(("[INFO] at		  			 	 index: %d fill: %d\n", index, vec->fill));
   return vec->buffer[index];
 }
 
@@ -61,8 +55,17 @@ bool is_empty(vector *vec) {
   return result;
 }
 
-vector *push(vector *vec, size_t element) {
+
+vector *prepend(vector *vec, size_t element) {
   vector *result = vec;
+	size_t temp;
+	DEBUG_PRINT(("[INFO] prepend	 			 "));
+  for(int i = 0; i <= vec->fill; i++) {
+    DEBUG_PRINT(("buffer[%d]: %d ", i, vec->buffer[i]));
+  }
+  //	DEBUG_PRINT(("buffer[%d]: %d ", vec->fill + 1, element));
+  DEBUG_PRINT(("\n"));
+
   if(vec->fill == vec->size) {
     result->fill = vec->fill + 1;
     result->size = vec->size * 2;
@@ -72,18 +75,23 @@ vector *push(vector *vec, size_t element) {
     result->size = vec->size;
     result->buffer = vec->buffer;
   }
-  result->buffer[result->fill] = element;
-  
-  DEBUG_PRINT(("[INFO] push			 "));
-  for(int i = 0; i <= vec->fill; i++) {
-    DEBUG_PRINT(("buffer[%d]: %d ", i, result->buffer[i]));
-  }
-  DEBUG_PRINT(("\n"));
+	
+	for(int i = result->fill; i >= 1; i--) {
+		result->buffer[i] = result->buffer[i - 1];
+	}
+	result->buffer[0] = element;
+	
   return result;
 }
 
-vector *push_tail(vector *vec, size_t element) {
+vector *append(vector *vec, size_t element) {
   vector *result = vec;  
+  DEBUG_PRINT(("[INFO] append					 "));
+  for(int i = 0; i <= vec->fill; i++) {
+    DEBUG_PRINT(("buffer[%d]: %d ", i, vec->buffer[i]));
+  }
+	DEBUG_PRINT(("\n"));
+	
   if(vec->fill == vec->size) {
     result->fill = vec->fill + 1;
     result->size = vec->size * 2;
@@ -93,58 +101,54 @@ vector *push_tail(vector *vec, size_t element) {
     result->size = vec->size;
     result->buffer = vec->buffer;    
   }
-  for(int i = result->fill; i >= 2; i -= 1) {
-    result->buffer[i] = result->buffer[i - 1];
-  }
-  result->buffer[1] = result->buffer[0];    
-  result->buffer[0] = element;
-
-  DEBUG_PRINT(("[INFO] push_tail			 "));
-  for(int i = 0; i <= vec->fill; i++) {
-    DEBUG_PRINT(("buffer[%d]: %d ", i, result->buffer[i]));
-  }
-  DEBUG_PRINT(("\n"));
+	result->buffer[result->fill] = element;
   return result;
 }
 
 vector *pop(vector *vec) {
-  size_t element = vec->buffer[vec->fill];
-  if(0 <= vec->fill - 1) {
+  size_t element = NULL || vec->buffer[vec->fill];
+	DEBUG_PRINT(("[INFO] pop		 	 			 "));
+
+  if(1 <= vec->size) {
+		DEBUG_PRINT(("head: %d fill: %d, size: %d\n", element, vec->fill, vec->size));
     vec->buffer[vec->fill] = NULL;
     vec->fill = vec->fill - 1;
-  }
-  
-  DEBUG_PRINT(("[INFO] pop		 	 			 head: %d", element));
-  DEBUG_PRINT(("\n"));
+  } else {
+		DEBUG_PRINT(("head: NULL fill: %d, size: %d\n", element, vec->fill, vec->size));
+		return NULL;
+	}
   return element;
 }
 
-void *pop_head(vector *vec) {
+void *shift(vector *vec) {
   size_t element = vec->buffer[0];
   size_t *temp_buffer = vec->buffer;
-  if(0 <= vec->fill) {
-    vec->fill = vec->fill - 1;
-    for(int i = 1; i <= vec->fill; i += 1) {
-      temp_buffer[i - 1] = vec->buffer[i];
-    }
-		temp_buffer[0] = vec->buffer[1];				
-  }
-  
-  DEBUG_PRINT(("[INFO] pop_head		 	 	 "));
-  for(int i = vec->fill; i >= 0; i--) {
+  DEBUG_PRINT(("[INFO] shift			 	 	 "));
+  for(int i = vec->fill; (i - 1) >= 0; i--) {
     int index = vec->fill - i;
     DEBUG_PRINT(("buffer[%d]: %d ", index, vec->buffer[index]));
   }
   DEBUG_PRINT(("\n"));
+
+  if(1 <= vec->fill) {
+    vec->fill = vec->fill - 1;
+		vec->buffer[0] = vec->buffer[1];				
+    for(int i = 0; i <= vec->fill; i += 1) {
+      vec->buffer[i] = vec->buffer[i + 1];
+    }
+  }
+  
   return element;
 }
 
 vector *insert(vector *vec, size_t index, size_t element) {
   vector *result = vec;
+  DEBUG_PRINT(("[INFO] insert	 	 	 	 	 element: %d size: %d\n",
+               vec->size, element));
   if(index == vec->fill) {
-    result = push(result, element);
+    result = prepend(result, element);
   } else if (index == 0) {
-    result = push_tail(result, element);
+    result = append(result, element);
   } else {
     result->fill += 1;
     for(int i = result->fill; i <= index; i--) {
@@ -152,8 +156,6 @@ vector *insert(vector *vec, size_t index, size_t element) {
     }
     result->buffer[index] = element;
   }
-  DEBUG_PRINT(("[INFO] insert 	 	 	 size: %d	element: %d\n",
-               result->size, element));
   return result;
 }
 
@@ -162,7 +164,7 @@ vector *delete(vector *vec, size_t index) {
   if(index == vec->fill) {
     result = pop(result);
   } else if (index == 0) {
-    result = pop_head(result);
+    result = shift(result);
   } else {
     result->fill -= 1; 
     for(int i = index; i <= result->fill; i++) {
