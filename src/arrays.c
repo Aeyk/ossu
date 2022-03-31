@@ -23,7 +23,7 @@ typedef struct {
 } array;
 
 array *make_array(size_t size) {
-	DEBUG_PRINT(("[INFO] make_array			 size: %d fill: %d\n",
+	DEBUG_PRINT(("[INFO] make_array				 size: %d fill: %d\n",
 							 size, 0));
 	array *result = calloc(size , sizeof(array));
 	result->size = size;
@@ -43,7 +43,7 @@ array *resize(array *arr, size_t size) {
 		destroy_array(arr);
 		return make_array(0);
 	} else {
-		result->size = arr->size * 2;
+		result->size = size;
 		result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
 	}
 	return arr;
@@ -90,9 +90,7 @@ array *prepend(array *arr, size_t element) {
 	DEBUG_PRINT(("\n"));
 
 	if(arr->fill == arr->size) {
-		result->fill = arr->fill + 1;
-		result->size = arr->size * 2;
-		result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
+		result = resize(arr, 2*arr->fill);
 	} else {
 		result->fill = arr->fill + 1;
 		result->size = arr->size;
@@ -116,8 +114,7 @@ array *append(array *arr, size_t element) {
 	DEBUG_PRINT(("\n"));
 
 	if(arr->fill == arr->size) {
-		result->size = arr->size * 2;
-		result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
+		result = resize(arr, 2*arr->fill);
 	} else {
 		result->size = arr->size;
 		result->buffer = arr->buffer;
@@ -135,6 +132,8 @@ array *pop(array *arr) {
 	if(0 == arr->fill) {
 		DEBUG_PRINT(("head: NULL fill: %d, size: %d\n", element, arr->fill, arr->size));
 		return arr->buffer[arr->fill] = NULL;;
+	} else if (arr->fill * 4 <= arr->size) {
+		arr = resize(arr, arr->fill / 2);
 	} else if(1 <= arr->fill) {
 		DEBUG_PRINT(("head: %d fill: %d, size: %d\n", element, arr->fill, arr->size));
 		arr->buffer[arr->fill] = NULL;
@@ -157,6 +156,9 @@ void *shift(array *arr) {
 	DEBUG_PRINT(("\n"));
 
 	if(1 <= arr->fill) {
+		if (arr->fill * 4 <= arr->size) {
+			arr = resize(arr, arr->fill / 2);
+		}
 		arr->fill = arr->fill - 1;
 		arr->buffer[0] = arr->buffer[1];
 		for(int i = 0; i <= arr->fill; i += 1) {
@@ -169,9 +171,9 @@ void *shift(array *arr) {
 
 array *insert(array *arr, size_t index, size_t element) {
 	if(arr->fill + 1 >= arr->size) {
-		arr->size = arr->size * 2;
-		arr->buffer = realloc(arr->buffer, arr->size * sizeof(size_t));
+		arr = resize(arr, 2*arr->fill);
 	}
+
 	arr->fill += 1;
 	for(int i = arr->fill; i >= index; i--) {
 		arr->buffer[i] = arr->buffer[i - 1];
@@ -192,16 +194,22 @@ array *delete(array *arr, size_t index) {
 	if(index < 0 || index > arr->fill)
 		return arr;
 
+
 	arr->buffer[index] = NULL;
 	for(int i = index; i > arr->fill; i++) {
 		arr->buffer[i - 1] = arr->buffer[i];
 	}
 	arr->fill -= 1;
+
+	if (arr->fill * 4 <= arr->size) {
+		arr = resize(arr, arr->fill / 2);
+	}
+
 	return arr;
 }
 
 void destroy_array(array *arr) {
-	DEBUG_PRINT(("[INFO] destroy_array	 size: %d fill: %d\n",
+	DEBUG_PRINT(("[INFO] destroy_array				 size: %d fill: %d\n",
 							 arr->size, arr->fill));
 	free(arr->buffer);
 	free(arr);
