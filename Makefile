@@ -1,6 +1,7 @@
 SRC_DIR = ./src
 INCLUDE_DIR += .
 BUILD_DIR = build
+TEST_DIR = tests
 TARGET = $(notdir $(CURDIR))
 CC := gcc
 LD := $(CC)
@@ -23,6 +24,12 @@ lib: src/arrays.c src/arrays.h
 	$(CC) -shared $(CFLAGS) $^ -o $(BUILD_DIR)/libossu-arrays.so
 	# mv arrays.o build
 	# ar rcs $(BUILD_DIR)/lib-ossu-arrays.a build/*.o
+
+
+.PHONY: tests
+
+tests:
+	@ruby $(TEST_DIR)/*.rb
 
 $(basename $(TARGET)) : $(OBJS)
 		@echo "Linking" $@ "from" $^ "..."
