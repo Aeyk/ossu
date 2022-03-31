@@ -57,11 +57,11 @@ bool is_empty(array *arr) {
 
 void print_array(array *arr) {
 	DEBUG_PRINT(("[INFO] print_array 	 	 "));
-  for(int i = 0; i < arr->fill; i++) {
+  for(int i = 0; i <= arr->fill; i++) {
 		DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
   DEBUG_PRINT(("size: %d fill: %d\n",
-               arr->size, arr->fill));	
+               arr->size, arr->fill));
 }
 
 array *prepend(array *arr, size_t element) {
