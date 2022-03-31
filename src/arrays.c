@@ -79,6 +79,32 @@ void print_array(array *arr) {
 							 arr->size, arr->fill));
 }
 
+size_t find(array *arr, size_t needle) {
+	for(int i = 0; i <= arr->fill; i++) {
+		if(arr->buffer[i] == needle)
+			return i;
+	}
+	return -1;
+}
+
+array *remove_item(array *arr, size_t needle) {
+	size_t index;
+	DEBUG_PRINT(("[INFO] remove_item				 needle: %d\n", needle));
+	for(int i = 0; i <= arr->fill; i++) {
+		if(arr->buffer[i] == needle) {
+			arr->buffer[i] = 0;
+			index = i;
+			break;
+		}
+	}
+	arr->fill -= 1;
+	for(int i = index; i <= arr->fill; i++) {
+		arr->buffer[i] = arr->buffer[i + 1];
+	}
+	return arr;
+}
+
+
 array *prepend(array *arr, size_t element) {
 	array *result = arr;
 	size_t temp;
