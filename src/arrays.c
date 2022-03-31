@@ -174,22 +174,14 @@ array *delete(array *arr, size_t index) {
 		DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
 	}
 	DEBUG_PRINT(("\n"));
+	if(index < 0 || index > arr->fill)
+		return arr;
 
-	if(index > arr->fill || (index < 0)) {
-		return NULL;
-	} else if(index == arr->fill - 1) {
-		shift(arr);
-	} else if (index == 0) {
-		pop(arr);
-	} else {
-		if(index <= arr->fill - 1) {
-			arr->buffer[index] = NULL;
-			for(int i = index; i < arr->fill - 1; i++) {
-				arr->buffer[i] = arr->buffer[i + 1];
-			}
-			arr->fill = arr->fill - 1;
-		}
+	arr->buffer[index] = NULL;
+	for(int i = index; i > arr->fill; i++) {
+		arr->buffer[i - 1] = arr->buffer[i];
 	}
+	arr->fill -= 1;
 	return arr;
 }
 
