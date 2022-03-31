@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <string.h> 
+#include <string.h>
 #include <assert.h>
 #include <math.h>
 #include <errno.h>
@@ -77,23 +77,23 @@ array *prepend(array *arr, size_t element) {
   if(arr->fill == arr->size) {
     result->fill = arr->fill + 1;
     result->size = arr->size * 2;
-    result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));    
+    result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
   } else {
     result->fill = arr->fill + 1;
     result->size = arr->size;
     result->buffer = arr->buffer;
   }
-	
+
 	for(int i = result->fill; i >= 1; i--) {
 		result->buffer[i] = result->buffer[i - 1];
 	}
 	result->buffer[0] = element;
-	
+
   return result;
 }
 
 array *append(array *arr, size_t element) {
-  array *result = arr;  
+  array *result = arr;
   DEBUG_PRINT(("[INFO] append					 "));
   for(int i = 0; i <= arr->fill; i++) {
     DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
@@ -109,7 +109,7 @@ array *append(array *arr, size_t element) {
   }
 	result->fill = arr->fill + 1;
 	result->buffer[result->fill - 1] = element;
-	
+
   return result;
 }
 
@@ -143,32 +143,25 @@ void *shift(array *arr) {
 
   if(1 <= arr->fill) {
     arr->fill = arr->fill - 1;
-		arr->buffer[0] = arr->buffer[1];				
+		arr->buffer[0] = arr->buffer[1];
     for(int i = 0; i <= arr->fill; i += 1) {
       arr->buffer[i] = arr->buffer[i + 1];
     }
   }
-  
+
   return element;
 }
 
 array *insert(array *arr, size_t index, size_t element) {
-  if(index == arr->fill - 1) {
-    arr = append(arr, element);
-  } else if (index == 0) {
-    arr = prepend(arr, element);
-  } else {
-	  if(arr->fill + 1 >= arr->size) {
-			arr->size = arr->size * 2;
-			arr->buffer = realloc(arr->buffer, arr->size * sizeof(size_t));
-		}
-		arr->fill += 1;
-		for(int i = arr->fill + 1; i < index; i--) {
-			arr->buffer[i - 1] = arr->buffer[i];
-		}
-		arr->buffer[index] = element;
-		
+	if(arr->fill + 1 >= arr->size) {
+		arr->size = arr->size * 2;
+		arr->buffer = realloc(arr->buffer, arr->size * sizeof(size_t));
 	}
+	arr->fill += 1;
+	for(int i = arr->fill; i >= index; i--) {
+		arr->buffer[i] = arr->buffer[i - 1];
+	}
+	arr->buffer[index] = element;
 	DEBUG_PRINT(("[INFO] insert	 	 	 	 	 element: %d size: %d fill: %d\n",
 							 element, arr->size, arr->fill));
 
@@ -210,11 +203,10 @@ void destroy_array(array *arr) {
 int main(int argc, char** argv) {
   assert(argc >= 1);
   assert(argv != NULL);
-  
+
   int _errno = errno;
   if(errno >= 0)
     return EXIT_SUCCESS;
   else
     return _errno;
 }
-
