@@ -23,7 +23,7 @@ typedef struct {
 } array;
 
 array *make_array(size_t size) {
-	DEBUG_PRINT(("[INFO] make_array			 size: %d	fill: %d\n",
+	DEBUG_PRINT(("[INFO] make_array			 size: %d fill: %d\n",
 							 size, 0));
 	array *result = calloc(size , sizeof(array));
 	result->size = size;
@@ -32,6 +32,21 @@ array *make_array(size_t size) {
 	for(int i = 0; i <= size; i++)
 		result->buffer[i] = NULL;
 	return result;
+}
+
+array *resize(array *arr, size_t size) {
+	DEBUG_PRINT(("[INFO] resize					 fill: %d size: %d\n", arr->fill, size));
+	array *result = arr;
+	if(size == arr->size) {
+		return arr;
+	} else if (size == 0) {
+		destroy_array(arr);
+		return make_array(0);
+	} else {
+		result->size = arr->size * 2;
+		result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
+	}
+	return arr;
 }
 
 size_t at(array *arr, size_t index) {
@@ -56,7 +71,7 @@ bool is_empty(array *arr) {
 }
 
 void print_array(array *arr) {
-	DEBUG_PRINT(("[INFO] print_array		 "));
+	DEBUG_PRINT(("[INFO] print_array				 "));
 	for(int i = 0; i <= arr->fill; i++) {
 		DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
 	}
@@ -186,7 +201,7 @@ array *delete(array *arr, size_t index) {
 }
 
 void destroy_array(array *arr) {
-	DEBUG_PRINT(("[INFO] destroy_array	 size: %d	fill: %d\n",
+	DEBUG_PRINT(("[INFO] destroy_array	 size: %d fill: %d\n",
 							 arr->size, arr->fill));
 	free(arr->buffer);
 	free(arr);
