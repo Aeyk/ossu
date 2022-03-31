@@ -40,7 +40,7 @@ size_t at(array *arr, size_t index) {
 }
 
 size_t size(array *arr) {
-  DEBUG_PRINT(("[INFO] size 			 %d\n", arr->fill));
+  DEBUG_PRINT(("[INFO] size	 			 		 fill: %d\n", arr->fill));
   return arr->fill;
 }
 
@@ -57,18 +57,18 @@ bool is_empty(array *arr) {
 
 void print_array(array *arr) {
 	DEBUG_PRINT(("[INFO] print_array 	 	 "));
-  for(int i = 0; i <  arr->fill; i++) {
+  for(int i = 0; i < arr->fill; i++) {
 		DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
   DEBUG_PRINT(("size: %d fill: %d\n",
-               arr->size, 0));	
+               arr->size, arr->fill));	
 }
 
 array *prepend(array *arr, size_t element) {
   array *result = arr;
 	size_t temp;
 	DEBUG_PRINT(("[INFO] prepend	 			 "));
-  for(int i = 0; i < arr->fill; i++) {
+  for(int i = 0; i < arr->fill; ++i) {
     DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
   //	DEBUG_PRINT(("buffer[%d]: %d ", arr->fill + 1, element));
@@ -99,22 +99,22 @@ array *append(array *arr, size_t element) {
     DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
 	DEBUG_PRINT(("\n"));
-	
+
   if(arr->fill == arr->size) {
-    result->fill = arr->fill + 1;
     result->size = arr->size * 2;
     result->buffer = realloc(arr->buffer, result->size * sizeof(size_t));
   } else {
-    result->fill = arr->fill + 1;
     result->size = arr->size;
-    result->buffer = arr->buffer;    
+    result->buffer = arr->buffer;
   }
-	result->buffer[result->fill] = element;
+	result->fill = arr->fill + 1;
+	result->buffer[result->fill - 1] = element;
+	
   return result;
 }
 
 array *pop(array *arr) {
-  size_t element = NULL || arr->buffer[arr->fill];
+  size_t element = arr->buffer[arr->fill - 1];
 	DEBUG_PRINT(("[INFO] pop		 	 			 "));
 
 	if(0 == arr->fill) {
@@ -153,44 +153,51 @@ void *shift(array *arr) {
 }
 
 array *insert(array *arr, size_t index, size_t element) {
-  array *result = arr;
-  DEBUG_PRINT(("[INFO] insert	 	 	 	 	 element: %d size: %d\n",
-               arr->size, element));
-  if(index == arr->fill) {
-    result = append(result, element);
+  if(index == arr->fill - 1) {
+    arr = append(arr, element);
   } else if (index == 0) {
-    result = prepend(result, element);
+    arr = prepend(arr, element);
   } else {
-    result->fill += 1;
-		if(result->fill >= index) {
-			for(int i = result->fill; i <= index; i--) {
-				result->buffer[i] = result->buffer[i - 1];
-			}
-		} 
-    result->buffer[index] = element;
-  }
-  return result;
+	  if(arr->fill + 1 >= arr->size) {
+			arr->size = arr->size * 2;
+			arr->buffer = realloc(arr->buffer, arr->size * sizeof(size_t));
+		}
+		arr->fill += 1;
+		for(int i = arr->fill + 1; i < index; i--) {
+			arr->buffer[i - 1] = arr->buffer[i];
+		}
+		arr->buffer[index] = element;
+		
+	}
+	DEBUG_PRINT(("[INFO] insert	 	 	 	 	 element: %d size: %d fill: %d\n",
+							 element, arr->size, arr->fill));
+
+	return arr;
 }
 
 array *delete(array *arr, size_t index) {
-  array *result = arr;
-  if(index == arr->fill) {
-    result = pop(result);
-  } else if (index == 0) {
-    result = shift(result);
-  } else {
-    result->fill -= 1; 
-    for(int i = index; i <= result->fill; i++) {
-      result->buffer[i] = result->buffer[i + 1];
-    }
-    result->buffer[index] = NULL;
-  }
-  DEBUG_PRINT(("[INFO] delete 	 		 "));
-  for(int i = arr->fill; i >= 0; i--) {
-    int index = arr->fill - i;
-    DEBUG_PRINT(("buffer[%d]: %d ", index, result->buffer[index]));
+	DEBUG_PRINT(("[INFO] delete 	 		 	 "));
+  for(int i = 0; i <= arr->fill; i++) {
+    DEBUG_PRINT(("buffer[%d]: %d ", i, arr->buffer[i]));
   }
   DEBUG_PRINT(("\n"));
+
+	if(index > arr->fill || (index < 0)) {
+		return NULL;
+	} else if(index == arr->fill - 1) {
+    shift(arr);
+  } else if (index == 0) {
+    pop(arr);
+  } else {
+		if(index <= arr->fill - 1) {
+			arr->buffer[index] = NULL;
+			for(int i = index; i < arr->fill - 1; i++) {
+				arr->buffer[i] = arr->buffer[i + 1];
+			}
+			arr->fill = arr->fill - 1;
+		}
+  }
+	return arr;
 }
 
 void destroy_array(array *arr) {
@@ -210,3 +217,4 @@ int main(int argc, char** argv) {
   else
     return _errno;
 }
+
